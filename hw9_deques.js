@@ -21,11 +21,37 @@ class Deque {
 // ════════════════════════════════════════════
 function isPalindrome(word) {
   const deque = new Deque();
-  // YOUR CODE HERE
+
+  const cleaned = word.toLowerCase().replace(/[^a-z]/g, "");
+
+  for (let char of cleaned) {
+    deque.addRear(char);
+  }
+
+  while (deque.size > 1) {
+    const front = deque.removeFront();
+    const rear = deque.removeRear();
+
+    if (front !== rear) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function longestPalindrome(words) {
-  // YOUR CODE HERE
+  let longest = null;
+
+  for (let word of words) {
+    if (isPalindrome(word)) {
+      if (longest === null || word.length > longest.length) {
+        longest = word;
+      }
+    }
+  }
+
+  return longest;
 }
 
 // ════════════════════════════════════════════
@@ -34,20 +60,26 @@ function longestPalindrome(words) {
 class TaskScheduler {
   #deque = new Deque();
 
-  addUrgent(task)  { /* YOUR CODE HERE */ }
-  addRoutine(task) { /* YOUR CODE HERE */ }
+  addUrgent(task)  {this.#deque.addFront(task)}
+  addRoutine(task) {this.#deque.addRear(task)}
 
   processNext() {
-    // YOUR CODE HERE
+    if (this.#deque.isEmpty()) return "no tasks";
+    return this.#deque.removeFront();
   }
 
   processLast() {
-    // YOUR CODE HERE
+    if (this.#deque.isEmpty()) return "No tasks";
+    return this.#deque.removeRear();
   }
 
   processAll() {
     const results = [];
-    // YOUR CODE HERE
+    
+    while (!this.#deque.isEmpty()) {
+      results.push(this.#deque.removeFront());
+    }
+
     return results;
   }
 
@@ -62,7 +94,24 @@ class TaskScheduler {
 function slidingWindowMax(nums, k) {
   const deque = new Deque();
   const result = [];
-  // YOUR CODE HERE
+  
+   for (let i = 0; i < nums.length; i++) {
+
+    while (!deque.isEmpty() && nums[deque.peekRear()] <= nums[i]) {
+      deque.removeRear();
+    }
+
+    deque.addRear(i);
+
+    if (deque.peekFront() <= i - k) {
+      deque.removeFront();
+    }
+
+    if (i >= k - 1) {
+      result.push(nums[deque.peekFront()]);
+    }
+  }
+
   return result;
 }
 
